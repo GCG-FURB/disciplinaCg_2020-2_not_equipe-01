@@ -1,0 +1,3 @@
+# 3. Desenhando objetos gráficos iguais
+
+Crie uma outra aplicação para fazer o desenho da imagem abaixo. Os círculos tem raio com valor 100. Aqui utilize a classe Circulo já criada e crie uma nova classe com o nome SegReta em  "SegReta.cs" para desenhar o triângulo. Utilize a operação soma para deslocar o centro das circunferências para as posições apresentadas na imagem abaixo. Esta soma não deve ser feita na classe Matematica, e sim ser informada no momento que for criado o novo objeto do tipo Circulo, passando um Ponto4D de deslocamento (ptoCentro).
