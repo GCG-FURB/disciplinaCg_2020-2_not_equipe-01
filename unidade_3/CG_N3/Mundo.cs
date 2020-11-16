@@ -48,34 +48,6 @@ namespace gcgcg
       Console.WriteLine(" --- Ajuda / Teclas: ");
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
-      objetoId = Utilitario.charProximo(objetoId);
-      objetoNovo = new Poligono(objetoId, null);
-      objetosLista.Add(objetoNovo);
-      objetoNovo.PontosAdicionar(new Ponto4D(50, 350));
-      objetoNovo.PontosAdicionar(new Ponto4D(150, 350));  // N3-Exe6: "troque" para deixar o rastro
-      objetoNovo.PontosAdicionar(new Ponto4D(100, 450));
-      objetoSelecionado = objetoNovo;
-      objetoNovo = null;
-
-#if CG_Privado
-      objetoId = Utilitario.charProximo(objetoId);
-      obj_Retangulo = new Retangulo(objetoId, null, new Ponto4D(50, 50, 0), new Ponto4D(150, 150, 0));
-      obj_Retangulo.ObjetoCor.CorR = 255; obj_Retangulo.ObjetoCor.CorG = 0; obj_Retangulo.ObjetoCor.CorB = 255;
-      objetosLista.Add(obj_Retangulo);
-      objetoSelecionado = obj_Retangulo;
-
-      objetoId = Utilitario.charProximo(objetoId);
-      obj_SegReta = new Privado_SegReta(objetoId, null, new Ponto4D(50, 150), new Ponto4D(150, 250));
-      obj_SegReta.ObjetoCor.CorR = 255; obj_SegReta.ObjetoCor.CorG = 99; obj_SegReta.ObjetoCor.CorB = 71;
-      objetosLista.Add(obj_SegReta);
-      objetoSelecionado = obj_SegReta;
-
-      objetoId = Utilitario.charProximo(objetoId);
-      obj_Circulo = new Privado_Circulo(objetoId, null, new Ponto4D(100, 300), 50);
-      obj_Circulo.ObjetoCor.CorR = 177; obj_Circulo.ObjetoCor.CorG = 166; obj_Circulo.ObjetoCor.CorB = 136;
-      objetosLista.Add(obj_Circulo);
-      objetoSelecionado = obj_Circulo;
-#endif
       GL.ClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     }
 
@@ -182,16 +154,23 @@ namespace gcgcg
             objetoSelecionado = (ObjetoGeometria)objetosLista.Last();
           }
         }
-        else if (e.Key == Key.D)
-        {
+        else if (e.Key == Key.D) {
           objetoSelecionado.RemoverPonto(indiceVerticeMaisProximo);
         }
         else if (e.Key == Key.V)
+        {
           moverVerticeMaisProximo = !moverVerticeMaisProximo;
+        }
+        else if (e.Key == Key.S)
+        {
+          objetoSelecionado.PrimitivaTipo = objetoSelecionado.PrimitivaTipo == PrimitiveType.LineLoop ? PrimitiveType.LineStrip : PrimitiveType.LineLoop;
+        }
         else
+          Console.WriteLine("Sem ser selecionado");
           Console.WriteLine(" __ Tecla não implementada.");
       }
       else
+        Console.WriteLine("Objeto não selecionado");
         Console.WriteLine(" __ Tecla não implementada.");
     }
 
