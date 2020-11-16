@@ -30,5 +30,9 @@ namespace CG_Biblioteca
     {
       return (raio * Math.Cos(Math.PI * 45 / 180.0));
     }
+
+    public static double DistanciaEntrePontos(Ponto4D ponto1, Ponto4D ponto2) {
+      return (Math.Pow((ponto1.X - ponto2.X), 2) + Math.Pow((ponto1.Y - ponto2.Y), 2));
+    }
   }
 }

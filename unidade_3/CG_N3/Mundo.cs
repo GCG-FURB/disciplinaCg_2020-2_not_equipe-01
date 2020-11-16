@@ -32,6 +32,8 @@ namespace gcgcg
     private bool bBoxDesenhar = false;
     int mouseX, mouseY;   //TODO: achar método MouseDown para não ter variável Global
     private Poligono objetoNovo = null;
+    private int indiceVerticeMaisProximo = 0;
+    private bool moverVerticeMaisProximo = false;
 #if CG_Privado
     private Retangulo obj_Retangulo;
     private Privado_SegReta obj_SegReta;
@@ -180,6 +182,12 @@ namespace gcgcg
             objetoSelecionado = (ObjetoGeometria)objetosLista.Last();
           }
         }
+        else if (e.Key == Key.D)
+        {
+          objetoSelecionado.RemoverPonto(indiceVerticeMaisProximo);
+        }
+        else if (e.Key == Key.V)
+          moverVerticeMaisProximo = !moverVerticeMaisProximo;
         else
           Console.WriteLine(" __ Tecla não implementada.");
       }
@@ -191,10 +199,24 @@ namespace gcgcg
     protected override void OnMouseMove(MouseMoveEventArgs e)
     {
       mouseX = e.Position.X; mouseY = 600 - e.Position.Y; // Inverti eixo Y
-      if (objetoNovo != null)
+
+      if (moverVerticeMaisProximo) {
+        objetoSelecionado.PontosAlterar(new Ponto4D(mouseX, mouseY), indiceVerticeMaisProximo);
+      }
+      else if (objetoNovo != null)
       {
         objetoNovo.PontosUltimo().X = mouseX;
         objetoNovo.PontosUltimo().Y = mouseY;
+      }
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+      int menorDistancia;
+      mouseX = e.Position.X; mouseY = 600 - e.Position.Y; // Inverti eixo Y
+
+      if (objetoSelecionado != null) {
+        indiceVerticeMaisProximo = objetoSelecionado.IndiceVerticeMaisProximo(new Ponto4D(mouseX, mouseY));
       }
     }
 

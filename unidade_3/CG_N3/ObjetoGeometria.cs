@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using CG_Biblioteca;
+using System;
 
 namespace gcgcg
 {
@@ -46,6 +47,33 @@ namespace gcgcg
     public void PontosAlterar(Ponto4D pto, int posicao)
     {
       pontosLista[posicao] = pto;
+    }
+
+    public int IndiceVerticeMaisProximo(Ponto4D ponto)
+    {
+      double menorDistancia = Double.MaxValue;
+      double distancia = 0;
+      int indiceVerticeMaisProximo = 0;
+
+      for (var i = 0; i < pontosLista.Count; i++)
+      {
+        distancia = Matematica.DistanciaEntrePontos(pontosLista[i], ponto);
+
+        if (distancia < menorDistancia) {
+          menorDistancia = distancia;
+          indiceVerticeMaisProximo = i;
+        }
+      }
+
+      return indiceVerticeMaisProximo;
+    }
+
+    public void RemoverPonto(int indice)
+    {
+      if (pontosLista.Count > 0)
+      {
+        pontosLista.RemoveAt(indice);
+      }
     }
 
     public override string ToString()
