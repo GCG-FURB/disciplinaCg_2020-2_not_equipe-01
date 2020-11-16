@@ -165,12 +165,28 @@ namespace gcgcg
         {
           objetoSelecionado.PrimitivaTipo = objetoSelecionado.PrimitivaTipo == PrimitiveType.LineLoop ? PrimitiveType.LineStrip : PrimitiveType.LineLoop;
         }
+        else if (e.Key == Key.R)
+        {
+          objetoSelecionado.ObjetoCor.CorR = 255;
+          objetoSelecionado.ObjetoCor.CorG = 0;
+          objetoSelecionado.ObjetoCor.CorB = 0;
+        }
+        else if (e.Key == Key.G)
+        {
+          objetoSelecionado.ObjetoCor.CorR = 0;
+          objetoSelecionado.ObjetoCor.CorG = 255;
+          objetoSelecionado.ObjetoCor.CorB = 0;
+        }
+        else if (e.Key == Key.B)
+        {
+          objetoSelecionado.ObjetoCor.CorR = 0;
+          objetoSelecionado.ObjetoCor.CorG = 0;
+          objetoSelecionado.ObjetoCor.CorB = 255;
+        }
         else
-          Console.WriteLine("Sem ser selecionado");
           Console.WriteLine(" __ Tecla não implementada.");
       }
       else
-        Console.WriteLine("Objeto não selecionado");
         Console.WriteLine(" __ Tecla não implementada.");
     }
 
