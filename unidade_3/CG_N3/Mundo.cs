@@ -99,6 +99,12 @@ namespace gcgcg
           objetoNovo = null;
         }
       }
+      else if (e.Key == Key.S)
+      {
+        if (objetoNovo != null) {
+          objetoNovo.PrimitivaTipo = objetoNovo.PrimitivaTipo == PrimitiveType.LineLoop ? PrimitiveType.LineStrip : PrimitiveType.LineLoop;
+        }
+      }
       else if (e.Key == Key.Space)
       {
         if (objetoNovo == null)
@@ -161,10 +167,6 @@ namespace gcgcg
         {
           moverVerticeMaisProximo = !moverVerticeMaisProximo;
         }
-        else if (e.Key == Key.S)
-        {
-          objetoSelecionado.PrimitivaTipo = objetoSelecionado.PrimitivaTipo == PrimitiveType.LineLoop ? PrimitiveType.LineStrip : PrimitiveType.LineLoop;
-        }
         else if (e.Key == Key.R)
         {
           objetoSelecionado.ObjetoCor.CorR = 255;
@@ -209,9 +211,24 @@ namespace gcgcg
     {
       int menorDistancia;
       mouseX = e.Position.X; mouseY = 600 - e.Position.Y; // Inverti eixo Y
-
-      if (objetoSelecionado != null) {
-        indiceVerticeMaisProximo = objetoSelecionado.IndiceVerticeMaisProximo(new Ponto4D(mouseX, mouseY));
+      // precisa adicionar aquela função aqui? pra quando clicar mover?
+      // é isso aqui que tem que fazer mesmo?
+      if (!moverVerticeMaisProximo)
+      {
+        if (objetoNovo == null)
+        {
+          objetoId = Utilitario.charProximo(objetoId);
+          objetoNovo = new Poligono(objetoId, null);
+          objetosLista.Add(objetoNovo);
+          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
+          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
+        }
+        else
+          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
+      } else {
+        if (objetoSelecionado != null) {
+          indiceVerticeMaisProximo = objetoSelecionado.IndiceVerticeMaisProximo(new Ponto4D(mouseX, mouseY));
+        }
       }
     }
 
