@@ -36,5 +36,26 @@ namespace gcgcg
       return (retorno);
     }
 
+    public bool estaSelecionado(double mouseX, double mouseY)
+    {
+      int nInt = 0;
+      for (int i = 0; i < pontosLista.Count; i++)
+      {
+        if (i + 1 < pontosLista.Count)
+        {
+          double y1 = pontosLista[i].Y;
+          double x1 = pontosLista[i].X;
+          double y2 = pontosLista[i+1].Y;
+          double x2 = pontosLista[i+1].X;
+          double ti = (mouseY - y1) / (y2 - y1); // ajuda a testar se o segmento de reta atual e o Y do click do mouse tiveram interssecação
+          double xi = x1 + (x2 - x1) * ti;
+
+          if (ti >= 0 && ti <= 1 && xi > mouseX)
+              nInt++;
+        }
+      }
+      return nInt % 2 != 0;
+    }
+
   }
 }

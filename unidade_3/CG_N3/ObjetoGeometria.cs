@@ -59,7 +59,8 @@ namespace gcgcg
       {
         distancia = Matematica.DistanciaEntrePontos(pontosLista[i], ponto);
 
-        if (distancia < menorDistancia) {
+        if (distancia < menorDistancia)
+        {
           menorDistancia = distancia;
           indiceVerticeMaisProximo = i;
         }

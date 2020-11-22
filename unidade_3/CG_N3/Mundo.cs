@@ -34,11 +34,7 @@ namespace gcgcg
     private Poligono objetoNovo = null;
     private int indiceVerticeMaisProximo = 0;
     private bool moverVerticeMaisProximo = false;
-#if CG_Privado
-    private Retangulo obj_Retangulo;
-    private Privado_SegReta obj_SegReta;
-    private Privado_Circulo obj_Circulo;
-#endif
+    private bool desenhandoPoligono = false;
 
     protected override void OnLoad(EventArgs e)
     {
@@ -92,6 +88,7 @@ namespace gcgcg
         bBoxDesenhar = !bBoxDesenhar;
       else if (e.Key == Key.Enter)
       {
+        desenhandoPoligono = false;
         if (objetoNovo != null)
         {
           objetoNovo.PontosRemoverUltimo();   // N3-Exe6: "truque" para deixar o rastro
@@ -107,6 +104,7 @@ namespace gcgcg
       }
       else if (e.Key == Key.Space)
       {
+        desenhandoPoligono = true;
         DesenharPoligono();
       }
       else if (objetoSelecionado != null)
@@ -200,21 +198,60 @@ namespace gcgcg
 
     protected override void OnMouseUp(MouseButtonEventArgs e)
     {
-      int menorDistancia;
       mouseX = e.Position.X; mouseY = 600 - e.Position.Y; // Inverti eixo Y
       // precisa adicionar aquela função aqui? pra quando clicar mover?
       // é isso aqui que tem que fazer mesmo?
-      if (!moverVerticeMaisProximo)
-      {
-        DesenharPoligono();
-      }
-      else
+
+      if (moverVerticeMaisProximo)
       {
         if (objetoSelecionado != null)
         {
           indiceVerticeMaisProximo = objetoSelecionado.IndiceVerticeMaisProximo(new Ponto4D(mouseX, mouseY));
         }
       }
+      else if (desenhandoPoligono)
+      {
+        DesenharPoligono();
+      }
+      else
+      {
+        SelecionarPoligono();
+      }
+    }
+
+    private void SelecionarPoligono()
+    {
+      foreach (var objeto in objetosLista)
+      {
+        if (mouseX >= objeto.BBox.obterMenorX &&
+          mouseX <= objeto.BBox.obterMaiorX &&
+          mouseY >= objeto.BBox.obterMenorY &&
+          mouseY <= objeto.BBox.obterMaiorY)
+        {
+          // dentro da BBox do objeto
+          // percorrer a lista de vértices
+          Console.WriteLine("Dentro da BBox");
+          if (((Poligono)objeto).estaSelecionado(mouseX, mouseY))
+          {
+            objetoSelecionado = (ObjetoGeometria)objeto;
+            Console.WriteLine("Objeto selecionado");
+            break;
+          }
+          else
+          {
+            objetoSelecionado = null;
+          }
+        }
+        else
+        {
+          Console.WriteLine("Fora da BBox");
+        }
+      }
+    }
+
+    private void ScanLine()
+    {
+
     }
 
     private void DesenharPoligono()
