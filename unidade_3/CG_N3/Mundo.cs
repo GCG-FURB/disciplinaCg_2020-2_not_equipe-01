@@ -107,16 +107,7 @@ namespace gcgcg
       }
       else if (e.Key == Key.Space)
       {
-        if (objetoNovo == null)
-        {
-          objetoId = Utilitario.charProximo(objetoId);
-          objetoNovo = new Poligono(objetoId, null);
-          objetosLista.Add(objetoNovo);
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
-        }
-        else
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
+        DesenharPoligono();
       }
       else if (objetoSelecionado != null)
       {
@@ -215,21 +206,29 @@ namespace gcgcg
       // é isso aqui que tem que fazer mesmo?
       if (!moverVerticeMaisProximo)
       {
-        if (objetoNovo == null)
+        DesenharPoligono();
+      }
+      else
+      {
+        if (objetoSelecionado != null)
         {
-          objetoId = Utilitario.charProximo(objetoId);
-          objetoNovo = new Poligono(objetoId, null);
-          objetosLista.Add(objetoNovo);
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
-        }
-        else
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
-      } else {
-        if (objetoSelecionado != null) {
           indiceVerticeMaisProximo = objetoSelecionado.IndiceVerticeMaisProximo(new Ponto4D(mouseX, mouseY));
         }
       }
+    }
+
+    private void DesenharPoligono()
+    {
+      if (objetoNovo == null)
+      {
+        objetoId = Utilitario.charProximo(objetoId);
+        objetoNovo = new Poligono(objetoId, null);
+        objetosLista.Add(objetoNovo);
+        objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
+        objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
+      }
+      else
+        objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
     }
 
 #if CG_Gizmo
