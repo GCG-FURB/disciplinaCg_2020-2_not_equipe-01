@@ -21,7 +21,7 @@ namespace gcgcg
     public BBox BBox { get => bBox; set => bBox = value; }
     private List<Objeto> objetosLista = new List<Objeto>();
 
-    private Transformacao4D matriz = new Transformacao4D();
+    private Transformacao4D matriz = new Transformacao4D(); // transformação geométrica do objeto
     public Transformacao4D Matriz { get => matriz; }
 
     /// Matrizes temporarias que sempre sao inicializadas com matriz Identidade entao podem ser "static".
@@ -29,7 +29,7 @@ namespace gcgcg
     private static Transformacao4D matrizTmpTranslacaoInversa = new Transformacao4D();
     private static Transformacao4D matrizTmpEscala = new Transformacao4D();
     private static Transformacao4D matrizTmpRotacao = new Transformacao4D();
-    private static Transformacao4D matrizGlobal = new Transformacao4D();
+    private static Transformacao4D matrizGlobal = new Transformacao4D(); // aqui
     private char eixoRotacao = 'z';
     public void TrocaEixoRotacao(char eixo) => eixoRotacao = eixo;
 
@@ -40,8 +40,8 @@ namespace gcgcg
 
     public void Desenhar()
     {
-      GL.PushMatrix();                                    // N3-Exe14: grafo de cena
-      GL.MultMatrix(matriz.ObterDados());
+      GL.PushMatrix();  // vai empilhando/deseimpilhando matrizes de tranformação do objeto                                // N3-Exe14: grafo de cena
+      GL.MultMatrix(matriz.ObterDados()); // multiplica a matriz ModelView pela matriz de tranformação que tem as transformações acumuladas
       GL.Color3(objetoCor.CorR, objetoCor.CorG, objetoCor.CorB);
       GL.LineWidth(primitivaTamanho);
       GL.PointSize(primitivaTamanho);

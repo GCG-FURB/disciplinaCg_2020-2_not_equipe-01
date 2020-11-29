@@ -35,7 +35,9 @@ namespace gcgcg
     private int indiceVerticeMaisProximo = 0;
     private bool moverVerticeMaisProximo = false;
     private bool desenhandoPoligono = false;
-
+    private bool selecionandoPoligono = false;
+    private int tipoTransformacao = 1;
+    // carrega apenas 1x
     protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e);
@@ -50,7 +52,7 @@ namespace gcgcg
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
       base.OnUpdateFrame(e);
-      GL.MatrixMode(MatrixMode.Projection);
+      GL.MatrixMode(MatrixMode.Projection); // serve para configurar a câmera
       GL.LoadIdentity();
       GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
     }
@@ -107,6 +109,10 @@ namespace gcgcg
         desenhandoPoligono = true;
         DesenharPoligono();
       }
+      else if (e.Key == Key.A)
+      {
+        selecionandoPoligono = !selecionandoPoligono;
+      }
       else if (objetoSelecionado != null)
       {
         if (e.Key == Key.M)
@@ -117,12 +123,16 @@ namespace gcgcg
           objetoSelecionado.AtribuirIdentidade();
         //TODO: não está atualizando a BBox com as transformações geométricas
         else if (e.Key == Key.Left)
+        // varia no X para esquerda
           objetoSelecionado.TranslacaoXYZ(-10, 0, 0);
         else if (e.Key == Key.Right)
+        // varia no X para direita
           objetoSelecionado.TranslacaoXYZ(10, 0, 0);
         else if (e.Key == Key.Up)
+        // varia no Y para cima
           objetoSelecionado.TranslacaoXYZ(0, 10, 0);
         else if (e.Key == Key.Down)
+        // varia no Y para baixo
           objetoSelecionado.TranslacaoXYZ(0, -10, 0);
         else if (e.Key == Key.PageUp)
           objetoSelecionado.EscalaXYZ(2, 2, 2);
@@ -201,7 +211,11 @@ namespace gcgcg
       mouseX = e.Position.X; mouseY = 600 - e.Position.Y; // Inverti eixo Y
       // precisa adicionar aquela função aqui? pra quando clicar mover?
       // é isso aqui que tem que fazer mesmo?
-
+      if (selecionandoPoligono)
+      {
+        Console.WriteLine("Selecionando poligono");
+        SelecionarPoligono();
+      }
       if (moverVerticeMaisProximo)
       {
         if (objetoSelecionado != null)
@@ -211,16 +225,14 @@ namespace gcgcg
       }
       else if (desenhandoPoligono)
       {
+        Console.WriteLine("Desenhando polígono");
         DesenharPoligono();
-      }
-      else
-      {
-        SelecionarPoligono();
       }
     }
 
     private void SelecionarPoligono()
     {
+      // quando fez a matriz de transformação no seu polígono e ele saiu da BBox, não está
       foreach (var objeto in objetosLista)
       {
         if (mouseX >= objeto.BBox.obterMenorX &&
@@ -229,12 +241,10 @@ namespace gcgcg
           mouseY <= objeto.BBox.obterMaiorY)
         {
           // dentro da BBox do objeto
-          // percorrer a lista de vértices
           Console.WriteLine("Dentro da BBox");
           if (((Poligono)objeto).estaSelecionado(mouseX, mouseY))
           {
             objetoSelecionado = (ObjetoGeometria)objeto;
-            Console.WriteLine("Objeto selecionado");
             break;
           }
           else
@@ -244,14 +254,9 @@ namespace gcgcg
         }
         else
         {
-          Console.WriteLine("Fora da BBox");
+            objetoSelecionado = null;
         }
       }
-    }
-
-    private void ScanLine()
-    {
-
     }
 
     private void DesenharPoligono()
@@ -259,8 +264,18 @@ namespace gcgcg
       if (objetoNovo == null)
       {
         objetoId = Utilitario.charProximo(objetoId);
-        objetoNovo = new Poligono(objetoId, null);
-        objetosLista.Add(objetoNovo);
+
+        if (objetoSelecionado != null)
+        {
+          objetoNovo = new Poligono(objetoId, objetoSelecionado);
+          objetoSelecionado.FilhoAdicionar(objetoNovo);
+        }
+        else
+        {
+          objetoNovo = new Poligono(objetoId, null);
+          objetosLista.Add(objetoNovo);
+        }
+
         objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
         objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
       }
