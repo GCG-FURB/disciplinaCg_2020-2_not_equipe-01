@@ -1,0 +1,20 @@
+@startuml
+class CameraPerspective {
+    - fovy : float
+    - aspect : float
+    - near : float
+    - far : float
+    - eye : Vector3
+    - at : Vector3
+    - up : Vector3
+    + CameraPerspective(fovy:float, aspect:float, near:float, far:float)
+    + Fovy : float <<get>> <<set>>
+    + Aspect : float <<get>> <<set>>
+    + Near : float <<get>> <<set>>
+    + Far : float <<get>> <<set>>
+    + Eye : Vector3 <<get>> <<set>>
+    + At : Vector3 <<get>> <<set>>
+    + Up : Vector3 <<get>>
+    + <<override>> ToString() : string
+}
+@enduml
