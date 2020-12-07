@@ -82,10 +82,10 @@ namespace gcgcg
     {
       matrizGlobal.AtribuirIdentidade();
       Ponto4D pontoPivo = bBox.obterCentro;
-
+      // atribui translacao com base no centro da BBOX e multiplica pela matriz global que inicialmente é a matriz identidade
       matrizTmpTranslacao.AtribuirTranslacao(-pontoPivo.X, -pontoPivo.Y, -pontoPivo.Z); // Inverter sinal
       matrizGlobal = matrizTmpTranslacao.MultiplicarMatriz(matrizGlobal);
-
+      // atribui a escala com base nos pontos informados (é atribuido na diagonal principal) e multiplica pela matriz global
       matrizTmpEscala.AtribuirEscala(Sx, Sy, Sz);
       matrizGlobal = matrizTmpEscala.MultiplicarMatriz(matrizGlobal);
 
@@ -94,6 +94,7 @@ namespace gcgcg
 
       matriz = matriz.MultiplicarMatriz(matrizGlobal);
     }
+    // rotação é feita com base no ângulo
     public void RotacaoEixo(double angulo)
     {
       switch (eixoRotacao)

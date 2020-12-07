@@ -39,6 +39,7 @@ namespace gcgcg
     public bool estaSelecionado(double mouseX, double mouseY)
     {
       int nInt = 0;
+      // e se for aplicada rotação/translação, como vai selecionar o objeto?
       for (int i = 0; i < pontosLista.Count; i++)
       {
         if (i + 1 < pontosLista.Count)

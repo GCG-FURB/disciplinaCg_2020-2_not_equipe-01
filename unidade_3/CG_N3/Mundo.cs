@@ -100,8 +100,8 @@ namespace gcgcg
       }
       else if (e.Key == Key.S)
       {
-        if (objetoNovo != null) {
-          objetoNovo.PrimitivaTipo = objetoNovo.PrimitivaTipo == PrimitiveType.LineLoop ? PrimitiveType.LineStrip : PrimitiveType.LineLoop;
+        if (objetoSelecionado != null) {
+          objetoSelecionado.PrimitivaTipo = objetoSelecionado.PrimitivaTipo == PrimitiveType.LineLoop ? PrimitiveType.LineStrip : PrimitiveType.LineLoop;
         }
       }
       else if (e.Key == Key.Space)
@@ -139,8 +139,12 @@ namespace gcgcg
         else if (e.Key == Key.PageDown)
           objetoSelecionado.EscalaXYZ(0.5, 0.5, 0.5);
         else if (e.Key == Key.Home)
+          //pega o centro da bbBox e atribui na translação
+          // multiplica por 0.5 e diagonal principal, diminuindo os valores da matriz identidade
           objetoSelecionado.EscalaXYZBBox(0.5, 0.5, 0.5);
         else if (e.Key == Key.End)
+          //pega o centro da bBox e atribui na translação
+          // multiplica por 2 a diagonal principal e diminui os valores da matriz identidade
           objetoSelecionado.EscalaXYZBBox(2, 2, 2);
         else if (e.Key == Key.Number1)
           objetoSelecionado.Rotacao(10);
@@ -157,6 +161,8 @@ namespace gcgcg
 
           if (objetosLista.Count > 0) {
             objetoSelecionado = (ObjetoGeometria)objetosLista.Last();
+          } else {
+            objetoSelecionado = null;
           }
         }
         else if (e.Key == Key.D) {
@@ -213,7 +219,6 @@ namespace gcgcg
       // é isso aqui que tem que fazer mesmo?
       if (selecionandoPoligono)
       {
-        Console.WriteLine("Selecionando poligono");
         SelecionarPoligono();
       }
       if (moverVerticeMaisProximo)
