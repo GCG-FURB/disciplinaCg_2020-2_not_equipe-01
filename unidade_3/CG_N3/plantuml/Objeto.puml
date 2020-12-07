@@ -1,9 +1,27 @@
 @startuml
 abstract class Objeto {
+    # rotulo : char
+    - objetoCor : Cor
+    + ObjetoCor : Cor <<get>> <<set>>
+    - primitivaTipo : PrimitiveType
+    + PrimitivaTipo : PrimitiveType <<get>> <<set>>
+    - primitivaTamanho : float = 1
     + PrimitivaTamanho : float <<get>> <<set>>
+    - bBox : BBox
+    + BBox : BBox <<get>> <<set>>
+    - objetosLista : List<Objeto>
+    - matriz : Transformacao4D
+    + Matriz : Transformacao4D <<get>>
+    - {static} matrizTmpTranslacao : Transformacao4D
+    - {static} matrizTmpTranslacaoInversa : Transformacao4D
+    - {static} matrizTmpEscala : Transformacao4D
+    - {static} matrizTmpRotacao : Transformacao4D
+    - {static} matrizGlobal : Transformacao4D
+    - eixoRotacao : char = 'z'
     + TrocaEixoRotacao(eixo:char) : void
-    + Objeto(rotulo:string, paiRef:Objeto)
+    + Objeto(rotulo:char, paiRef:Objeto)
     + Desenhar() : void
+    # {abstract} DesenharGeometria() : void
     + FilhoAdicionar(filho:Objeto) : void
     + FilhoRemover(filho:Objeto) : void
     + AtribuirIdentidade() : void
@@ -14,8 +32,4 @@ abstract class Objeto {
     + Rotacao(angulo:double) : void
     + RotacaoZBBox(angulo:double) : void
 }
-Objeto --> "ObjetoCor" Cor
-Objeto --> "PrimitivaTipo" PrimitiveType
-Objeto --> "BBox" BBox
-Objeto --> "Matriz" Transformacao4D
 @enduml

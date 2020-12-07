@@ -1,7 +1,9 @@
 @startuml
 class Poligono {
-    + Poligono(rotulo:string, paiRef:Objeto)
+    + Poligono(rotulo:char, paiRef:Objeto)
+    # <<override>> DesenharObjeto() : void
     + <<override>> ToString() : string
+    + estaSelecionado(mouseX:double, mouseY:double) : bool
 }
 ObjetoGeometria <|-- Poligono
 @enduml

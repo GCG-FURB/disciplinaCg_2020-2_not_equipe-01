@@ -1,10 +1,16 @@
 @startuml
 abstract class ObjetoGeometria {
-    + ObjetoGeometria(rotulo:string, paiRef:Objeto)
+    # pontosLista : List<Ponto4D>
+    + ObjetoGeometria(rotulo:char, paiRef:Objeto)
+    # <<override>> DesenharGeometria() : void
+    # {abstract} DesenharObjeto() : void
     + PontosAdicionar(pto:Ponto4D) : void
     + PontosRemoverUltimo() : void
+    # PontosRemoverTodos() : void
     + PontosUltimo() : Ponto4D
     + PontosAlterar(pto:Ponto4D, posicao:int) : void
+    + IndiceVerticeMaisProximo(ponto:Ponto4D) : int
+    + RemoverPonto(indice:int) : void
     + <<override>> ToString() : string
 }
 Objeto <|-- ObjetoGeometria
