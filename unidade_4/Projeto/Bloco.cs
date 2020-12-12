@@ -141,22 +141,25 @@ namespace CG_N3
         /// </summary>
         /// <param name="x">Deslocamento em X</param>
         /// <param name="y">Deslocamento em Y</param>
-        public void Move(double x, double y)
+        public void Move(double x, double y, CameraOrtho camera)
         {
-            // Percorre os pontos do quadro principal
-            foreach (var pto in pontosLista)
+            if(this.validMovement(x,y,camera))
             {
-                pto.X += x;
-                pto.Y += y;
-            }
-
-            // Percorre os filhos do objeto principal
-            foreach (var filho in this.GetFilhos())
-            {
-                foreach (var pto in filho.pontosLista)
+                // Percorre os pontos do quadro principal
+                foreach (var pto in pontosLista)
                 {
                     pto.X += x;
                     pto.Y += y;
+                }
+
+                // Percorre os filhos do objeto principal
+                foreach (var filho in this.GetFilhos())
+                {
+                    foreach (var pto in filho.pontosLista)
+                    {
+                        pto.X += x;
+                        pto.Y += y;
+                    }
                 }
             }
         }
@@ -712,6 +715,30 @@ namespace CG_N3
                 default:
                     break;
             }
+        }
+
+        private bool validMovement(double x, double y, CameraOrtho camera)
+        {
+            foreach(var pto in pontosLista)
+            {
+                if (pto.X + x > camera.xmax  || pto.X + x < camera.xmin || pto.Y + y > camera.ymax || pto.Y + y < camera.ymin)
+                {
+                    return false;
+                }
+            }
+
+            foreach (var filho in this.GetFilhos())
+            {
+                foreach (var pto in filho.pontosLista)
+                {
+                    if (pto.X + x > camera.xmax || pto.X + x < camera.xmin || pto.Y + y > camera.ymax || pto.Y + y < camera.ymin)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
