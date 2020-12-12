@@ -33,6 +33,9 @@ namespace CG_N3
                 case BlocoType.J:
                     this.GenerateJ();
                     break;
+                case BlocoType.S:
+                    this.GenerateS();
+                    break;
                 default:
                     break;
             }
@@ -82,6 +85,14 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X - 30, pto.Y)));
         }
 
+        private void GenerateS()
+        {
+            Ponto4D pto = pontosLista[0];
+            this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X + 30, pto.Y), new Ponto4D(pto.X + 60, pto.Y + 30)));
+            this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
+            this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X - 30, pto.Y)));
+        }
+
         public void Rotate()
         {
             switch (BlocoType)
@@ -100,6 +111,9 @@ namespace CG_N3
                     break;
                 case BlocoType.J:
                     this.RotateJ();
+                    break;
+                case BlocoType.S:
+                    this.RotateS();
                     break;
                 default:
                     break;
@@ -527,6 +541,77 @@ namespace CG_N3
                                 foreach (var pto in filho.pontosLista)
                                 {
                                     pto.Y -= 60;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode1";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void RotateS()
+        {
+            switch (this.Mode)
+            {
+                case "Mode1":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'A':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 30;
+                                    pto.Y += 30;
+                                }
+                                break;
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 30;
+                                    pto.Y += 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 60;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode2";
+                    break;
+                case "Mode2":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'A':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 30;
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 30;
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 60;
                                 }
                                 break;
                             default:
