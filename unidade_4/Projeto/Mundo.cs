@@ -26,35 +26,48 @@ namespace gcgcg
 
     private CameraOrtho camera = new CameraOrtho();
     protected List<Objeto> objetosLista = new List<Objeto>();
-    private ObjetoGeometria objetoSelecionado = null;
+    private Bloco objetoSelecionado = null;
     private Ponto4D verticeSelecionado = null;
     private char objetoId = '@';
     private bool bBoxDesenhar = false;
     int mouseX, mouseY;   //TODO: achar método MouseDown para não ter variável Global
     private Poligono objetoNovo = null;
     private Bloco bloco;
-#if CG_Privado
-    private Retangulo obj_Retangulo;
-    private Privado_SegReta obj_SegReta;
-    private Privado_Circulo obj_Circulo;
-#endif
 
-        protected override void OnLoad(EventArgs e)
+    protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e);
-      camera.xmin = 0; camera.xmax =300; camera.ymin = 0; camera.ymax = 300;
+      camera.xmin = 0; camera.xmax = 300; camera.ymin = 0; camera.ymax = 300;
 
       Console.WriteLine(" --- Ajuda / Teclas: ");
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
-      objetoId = Utilitario.charProximo(objetoId);
-      bloco = new Bloco(objetoId, null, new Ponto4D(0, 0, 0), new Ponto4D(30, 30, 0));
-      bloco.GenerateT();
-      objetosLista.Add(bloco);
-      objetoSelecionado = bloco;
-            bloco = null;
+      generateRandomBlocoType();
 
       GL.ClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    }
+
+    /// <summary>
+    /// Gera um tipo aleatório de bloco
+    /// </summary>
+    protected void generateRandomBlocoType()
+    {
+        Array values = Enum.GetValues(typeof(BlocoType));
+        Random random = new Random();
+        BlocoType randomBar = (BlocoType)values.GetValue(random.Next(values.Length));
+        objetoId = Utilitario.charProximo(objetoId);
+        bloco = new Bloco(objetoId, null, new Ponto4D(120, 240, 0), new Ponto4D(150, 270, 0), randomBar);
+        objetosLista.Add(bloco);
+        objetoSelecionado = bloco;
+        bloco = null;
+
+     }
+
+    protected void PutBlocoDown()
+    {
+     
+        if (objetoSelecionado != null)
+            objetoSelecionado.Move(0, -30, camera);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs e)
@@ -63,6 +76,7 @@ namespace gcgcg
       GL.MatrixMode(MatrixMode.Projection);
       GL.LoadIdentity();
       GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
+      PutBlocoDown();
     }
     protected override void OnRenderFrame(FrameEventArgs e)
     {
@@ -70,7 +84,7 @@ namespace gcgcg
       GL.Clear(ClearBufferMask.ColorBufferBit);
       GL.MatrixMode(MatrixMode.Modelview);
       GL.LoadIdentity();
-#if CG_Gizmo      
+#if CG_Gizmo
       Sru3D();
 #endif
       for (var i = 0; i < objetosLista.Count; i++)
@@ -96,7 +110,7 @@ namespace gcgcg
       }
       else if (e.Key == Key.O)
         bBoxDesenhar = !bBoxDesenhar;
-      else if (e.Key == Key.Enter)
+      /*else if (e.Key == Key.Enter)
       {
         if (objetoNovo != null)
         {
@@ -104,12 +118,12 @@ namespace gcgcg
           objetoSelecionado = objetoNovo;
           objetoNovo = null;
         }
-      }
+      }*/
       /*else if (e.Key == Key.Space)
       {
         if (objetoNovo == null)
         {
-         
+
           objetoId = Utilitario.charProximo(objetoId);
           objetoNovo = new Poligono(objetoId, null);
             if (objetoSelecionado != null)
@@ -119,18 +133,18 @@ namespace gcgcg
             {
                 objetosLista.Add(objetoNovo);
             }
-                       
+
           objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
           objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
         }
         else
           objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
       }*/
-      else if (e.Key == Key.A)
+      /*else if (e.Key == Key.A)
        {
         // Seleciona o objeto onde o cursor esteja na boundbox
         foreach (var objeto in objetosLista)
-        {    
+        {
             if (mouseX > objeto.BBox.obterMenorX && mouseX < objeto.BBox.obterMaiorX)
             {
                 if (mouseY > objeto.BBox.obterMenorY && mouseY < objeto.BBox.obterMaiorY)
@@ -143,13 +157,13 @@ namespace gcgcg
                     } else
                     {
                        objetoSelecionado = null;
-                    }  
+                    }
                     return;
                 }
             }
         }
         objetoSelecionado = null;
-       }
+       }*/
       else if (objetoSelecionado != null)
       {
                 if (e.Key == Key.M)
@@ -160,13 +174,11 @@ namespace gcgcg
                     objetoSelecionado.AtribuirIdentidade();
                 //TODO: não está atualizando a BBox com as transformações geométricas
                 else if (e.Key == Key.Left)
-                    objetoSelecionado.TranslacaoXYZ(-30, 0, 0);
+                    objetoSelecionado.Move(-30, 0, camera);
                 else if (e.Key == Key.Right)
-                    objetoSelecionado.TranslacaoXYZ(30, 0, 0);
-                else if (e.Key == Key.Up)
-                    objetoSelecionado.TranslacaoXYZ(0, 30, 0);
+                    objetoSelecionado.Move(30, 0, camera);
                 else if (e.Key == Key.Down)
-                    objetoSelecionado.TranslacaoXYZ(0, -30, 0);
+                    objetoSelecionado.Move(0, -30, camera);
                 else if (e.Key == Key.PageUp)
                     objetoSelecionado.EscalaXYZ(2, 2, 2);
                 else if (e.Key == Key.PageDown)
@@ -180,13 +192,16 @@ namespace gcgcg
                 else if (e.Key == Key.Number2)
                     objetoSelecionado.Rotacao(-10);
                 else if (e.Key == Key.Space)
-                    objetoSelecionado.RotacaoZBBox(90);
+                {
+                    objetoSelecionado.Rotate();
+                }
+
                 else if (e.Key == Key.Number4)
                     objetoSelecionado.RotacaoZBBox(-10);
                 else if (e.Key == Key.Number9)
                     objetoSelecionado = null;                     // desmacar objeto selecionado
-                
-                else if (e.Key == Key.C)
+
+                /*else if (e.Key == Key.C)
                 {
                     // Remove Objeto selecionado
                     objetosLista.Remove(objetoSelecionado);
@@ -195,17 +210,19 @@ namespace gcgcg
                     if (objetosLista.Count > 0)
                     objetoSelecionado = (ObjetoGeometria)objetosLista[objetosLista.Count - 1];
                     objetoSelecionado.FilhoRemover(objetoOld);
-                } else if (e.Key == Key.V)
-                    // Seleciona vértice
+                } */
+                else if (e.Key == Key.V)
+                // Seleciona vértice
                 {
                     if (verticeSelecionado == null)
                     {
                         verticeSelecionado = objetoSelecionado.CalculaPontoProximo(new Ponto4D(mouseX, mouseY));
-                    } else
+                    }
+                    else
                     {
                         verticeSelecionado = null;
                     }
-                    
+
                 }
                 else if (e.Key == Key.D)
                 {
@@ -228,7 +245,7 @@ namespace gcgcg
                         {
                             objetoNovo.PrimitivaTipo = PrimitiveType.LineLoop;
                         }
-                    }          
+                    }
                 }
                 else if (e.Key == Key.R)
                 {
@@ -251,7 +268,7 @@ namespace gcgcg
                     objetoSelecionado.ObjetoCor.CorG = 0;
                     objetoSelecionado.ObjetoCor.CorB = 255;
                 }
-                
+
                 else
                     Console.WriteLine(" __ Tecla não implementada.");
       }
@@ -275,25 +292,17 @@ namespace gcgcg
                     verticeSelecionado.X = mouseX;
                     verticeSelecionado.Y = mouseY;
                 }
-                    
+
             }
     }
-        
+
 
 #if CG_Gizmo
     private void Sru3D()
     {
       GL.LineWidth(1);
       GL.Begin(PrimitiveType.Lines);
-      // GL.Color3(1.0f,0.0f,0.0f);
-      GL.Color3(Convert.ToByte(255), Convert.ToByte(0), Convert.ToByte(0));
-      GL.Vertex3(0, 0, 0); GL.Vertex3(200, 0, 0);
-      // GL.Color3(0.0f,1.0f,0.0f);
-      GL.Color3(Convert.ToByte(0), Convert.ToByte(255), Convert.ToByte(0));
-      GL.Vertex3(0, 0, 0); GL.Vertex3(0, 200, 0);
-      // GL.Color3(0.0f,0.0f,1.0f);
-      GL.Color3(Convert.ToByte(0), Convert.ToByte(0), Convert.ToByte(255));
-      GL.Vertex3(0, 0, 0); GL.Vertex3(0, 0, 200);
+
       GL.End();
     }
 #endif
@@ -304,7 +313,7 @@ namespace gcgcg
     {
       Mundo window = Mundo.GetInstance(600, 600);
       window.Title = "CG_N3";
-      window.Run(1.0 / 60.0);
+      window.Run(1.0 / 1.0);
     }
   }
 }
