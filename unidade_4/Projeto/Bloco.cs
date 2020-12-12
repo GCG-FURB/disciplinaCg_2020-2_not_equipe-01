@@ -17,10 +17,6 @@ namespace CG_N3
         /// <param name="blocoType">Tipo de bloco</param>
         public Bloco(char rotulo, Objeto paiRef, Ponto4D ptoInfEsq, Ponto4D ptoSupDir, BlocoType blocoType) : base(rotulo, paiRef, ptoInfEsq, ptoSupDir)
         {
-            base.PontosAdicionar(ptoInfEsq);
-            base.PontosAdicionar(new Ponto4D(ptoSupDir.X, ptoInfEsq.Y));
-            base.PontosAdicionar(ptoSupDir);
-            base.PontosAdicionar(new Ponto4D(ptoInfEsq.X, ptoSupDir.Y));
             BlocoType = blocoType;
             Mode = "Mode1";
 
@@ -138,6 +134,31 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X + 30, pto.Y), new Ponto4D(pto.X + 60, pto.Y + 30)));
             this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X + 30, pto.Y - 30), new Ponto4D(pto.X + 60, pto.Y)));
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
+        }
+
+        /// <summary>
+        /// Move um objeto
+        /// </summary>
+        /// <param name="x">Deslocamento em X</param>
+        /// <param name="y">Deslocamento em Y</param>
+        public void Move(double x, double y)
+        {
+            // Percorre os pontos do quadro principal
+            foreach (var pto in pontosLista)
+            {
+                pto.X += x;
+                pto.Y += y;
+            }
+
+            // Percorre os filhos do objeto principal
+            foreach (var filho in this.GetFilhos())
+            {
+                foreach (var pto in filho.pontosLista)
+                {
+                    pto.X += x;
+                    pto.Y += y;
+                }
+            }
         }
 
         /// <summary>
