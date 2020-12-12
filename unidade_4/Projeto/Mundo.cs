@@ -42,14 +42,26 @@ namespace gcgcg
       Console.WriteLine(" --- Ajuda / Teclas: ");
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
-      objetoId = Utilitario.charProximo(objetoId);
-      bloco = new Bloco(objetoId, null, new Ponto4D(120, 240, 0), new Ponto4D(150, 270, 0), BlocoType.S);
-      objetosLista.Add(bloco);
-      objetoSelecionado = bloco;
-            bloco = null;
+      generateRandomBlocoType();
 
       GL.ClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     }
+
+    /// <summary>
+    /// Gera um tipo aleatório de bloco
+    /// </summary>
+    protected void generateRandomBlocoType()
+    {
+        Array values = Enum.GetValues(typeof(BlocoType));
+        Random random = new Random();
+        BlocoType randomBar = (BlocoType)values.GetValue(random.Next(values.Length));
+        objetoId = Utilitario.charProximo(objetoId);
+        bloco = new Bloco(objetoId, null, new Ponto4D(120, 240, 0), new Ponto4D(150, 270, 0), randomBar);
+        objetosLista.Add(bloco);
+        objetoSelecionado = bloco;
+        bloco = null;
+
+     }
 
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
@@ -157,8 +169,6 @@ namespace gcgcg
                     objetoSelecionado.Move(-30, 0, camera);
                 else if (e.Key == Key.Right)
                     objetoSelecionado.Move(30, 0, camera);
-                else if (e.Key == Key.Up)
-                    objetoSelecionado.Move(0, 30, camera);
                 else if (e.Key == Key.Down)
                     objetoSelecionado.Move(0, -30, camera);
                 else if (e.Key == Key.PageUp)
