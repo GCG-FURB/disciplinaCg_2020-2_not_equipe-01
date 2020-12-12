@@ -27,6 +27,9 @@ namespace CG_N3
                 case BlocoType.Z:
                     this.GenerateZ();
                     break;
+                case BlocoType.L:
+                    this.GenerateL();
+                    break;
                 default:
                     break;
             }
@@ -58,7 +61,15 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X, pto.Y + 30), new Ponto4D(pto.X + 30, pto.Y + 60)));
             this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X - 30, pto.Y), new Ponto4D(pto.X, pto.Y + 30)));
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X - 30, pto.Y - 30), new Ponto4D(pto.X, pto.Y)));
-        } 
+        }
+
+        private void GenerateL()
+        {
+            Ponto4D pto = pontosLista[0];
+            this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X, pto.Y + 30), new Ponto4D(pto.X + 30, pto.Y + 60)));
+            this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
+            this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X + 30, pto.Y - 30), new Ponto4D(pto.X + 60, pto.Y)));
+        }
 
         public void Rotate()
         {
@@ -72,6 +83,9 @@ namespace CG_N3
                     break;
                 case BlocoType.Z:
                     this.RotateZ();
+                    break;
+                case BlocoType.L:
+                    this.RotateL();
                     break;
                 default:
                     break;
@@ -238,6 +252,136 @@ namespace CG_N3
                                 foreach (var pto in filho.pontosLista)
                                 {
                                     pto.X -= 60;
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode1";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void RotateL()
+        {
+            switch (this.Mode)
+            {
+                case "Mode1":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'A':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 30;
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 30;
+                                    pto.Y += 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.Y += 60;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode2";
+                    break;
+                case "Mode2":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'A':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.Y += 30;
+                                }
+                                break;
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 30;
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 30;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode3";
+                    break;
+                case "Mode3":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'A':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 30;
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode4";
+                    break;
+                case "Mode4":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'A':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 30;
+                                    pto.Y += 30;
+                                }
+                                break;
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
                                     pto.Y -= 30;
                                 }
                                 break;
