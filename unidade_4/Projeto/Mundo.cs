@@ -67,7 +67,7 @@ namespace gcgcg
     {
      
         if (objetoSelecionado != null)
-            objetoSelecionado.Move(0, -30);
+            objetoSelecionado.Move(0, -30, camera);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs e)
