@@ -24,6 +24,9 @@ namespace CG_N3
                 case BlocoType.I:
                     this.GenerateI();
                     break;
+                case BlocoType.Z:
+                    this.GenerateZ();
+                    break;
                 default:
                     break;
             }
@@ -33,7 +36,7 @@ namespace CG_N3
 
         internal string Mode { get; set; }
 
-        public void GenerateT()
+        private void GenerateT()
         {
             Ponto4D pto = pontosLista[0];
             this.FilhoAdicionar(new Retangulo('L', this, new Ponto4D(pto.X - 30, pto.Y), new Ponto4D(pto.X, pto.Y + 30)));
@@ -41,13 +44,21 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
         }
 
-        public void GenerateI()
+        private void GenerateI()
         {
             Ponto4D pto = pontosLista[0];
             this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X, pto.Y + 30), new Ponto4D(pto.X + 30, pto.Y + 60)));
             this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 60), new Ponto4D(pto.X + 30, pto.Y - 30)));
         }
+
+        private void GenerateZ()
+        {
+            Ponto4D pto = pontosLista[0];
+            this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X, pto.Y + 30), new Ponto4D(pto.X + 30, pto.Y + 60)));
+            this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X - 30, pto.Y), new Ponto4D(pto.X, pto.Y + 30)));
+            this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X - 30, pto.Y - 30), new Ponto4D(pto.X, pto.Y)));
+        } 
 
         public void Rotate()
         {
@@ -58,6 +69,9 @@ namespace CG_N3
                     break;
                 case BlocoType.I:
                     this.RotateI();
+                    break;
+                case BlocoType.Z:
+                    this.RotateZ();
                     break;
                 default:
                     break;
@@ -168,6 +182,63 @@ namespace CG_N3
                                 {
                                     pto.X -= 60;
                                     pto.Y -= 60;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode1";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void RotateZ()
+        {
+            switch (this.Mode)
+            {
+                case "Mode1":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.Y += 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X += 60;
+                                    pto.Y += 30;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    this.Mode = "Mode2";
+                    break;
+                case "Mode2":
+                    foreach (var filho in this.GetFilhos())
+                    {
+                        switch (filho.rotulo)
+                        {
+                            case 'B':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.Y -= 30;
+                                }
+                                break;
+                            case 'C':
+                                foreach (var pto in filho.pontosLista)
+                                {
+                                    pto.X -= 60;
+                                    pto.Y -= 30;
                                 }
                                 break;
                             default:
