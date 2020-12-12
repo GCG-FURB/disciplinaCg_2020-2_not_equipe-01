@@ -48,7 +48,7 @@ namespace gcgcg
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
       objetoId = Utilitario.charProximo(objetoId);
-      bloco = new Bloco(objetoId, null, new Ponto4D(0, 0, 0), new Ponto4D(30, 30, 0), BlocoType.S);
+      bloco = new Bloco(objetoId, null, new Ponto4D(0, 0, 0), new Ponto4D(30, 30, 0), BlocoType.O);
       objetosLista.Add(bloco);
       objetoSelecionado = bloco;
             bloco = null;

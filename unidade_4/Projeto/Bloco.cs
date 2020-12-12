@@ -7,6 +7,14 @@ namespace CG_N3
 {
     internal class Bloco : Retangulo
     {
+        /// <summary>
+        /// Construtor
+        /// </summary>
+        /// <param name="rotulo">Rótulo do bloco</param>
+        /// <param name="paiRef">Referência pai</param>
+        /// <param name="ptoInfEsq">Ponto inferior esquerdo</param>
+        /// <param name="ptoSupDir">Ponto superior direito</param>
+        /// <param name="blocoType">Tipo de bloco</param>
         public Bloco(char rotulo, Objeto paiRef, Ponto4D ptoInfEsq, Ponto4D ptoSupDir, BlocoType blocoType) : base(rotulo, paiRef, ptoInfEsq, ptoSupDir)
         {
             base.PontosAdicionar(ptoInfEsq);
@@ -16,6 +24,7 @@ namespace CG_N3
             BlocoType = blocoType;
             Mode = "Mode1";
 
+            // Gera o bloco de acordo com o parâmetro
             switch (BlocoType)
             {
                 case BlocoType.T:
@@ -36,15 +45,27 @@ namespace CG_N3
                 case BlocoType.S:
                     this.GenerateS();
                     break;
+                case BlocoType.O:
+                    this.GenerateO();
+                    break;
                 default:
                     break;
             }
         }
 
+        /// <summary>
+        /// Tipo do bloco gerado
+        /// </summary>
         public BlocoType BlocoType { get; }
 
+        /// <summary>
+        /// Modo de rotação do bloco
+        /// </summary>
         internal string Mode { get; set; }
 
+        /// <summary>
+        /// Gera o bloco T
+        /// </summary>
         private void GenerateT()
         {
             Ponto4D pto = pontosLista[0];
@@ -53,6 +74,9 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
         }
 
+        /// <summary>
+        /// Gera o bloco I
+        /// </summary>
         private void GenerateI()
         {
             Ponto4D pto = pontosLista[0];
@@ -61,6 +85,9 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 60), new Ponto4D(pto.X + 30, pto.Y - 30)));
         }
 
+        /// <summary>
+        /// Gera o bloco Z
+        /// </summary>
         private void GenerateZ()
         {
             Ponto4D pto = pontosLista[0];
@@ -69,6 +96,9 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X - 30, pto.Y - 30), new Ponto4D(pto.X, pto.Y)));
         }
 
+        /// <summary>
+        /// Gera o bloco L
+        /// </summary>
         private void GenerateL()
         {
             Ponto4D pto = pontosLista[0];
@@ -77,6 +107,9 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X + 30, pto.Y - 30), new Ponto4D(pto.X + 60, pto.Y)));
         }
 
+        /// <summary>
+        /// Gera o bloco J
+        /// </summary>
         private void GenerateJ()
         {
             Ponto4D pto = pontosLista[0];
@@ -85,6 +118,9 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X - 30, pto.Y)));
         }
 
+        /// <summary>
+        /// Gera o bloco S
+        /// </summary>
         private void GenerateS()
         {
             Ponto4D pto = pontosLista[0];
@@ -93,6 +129,20 @@ namespace CG_N3
             this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X - 30, pto.Y)));
         }
 
+        /// <summary>
+        /// Gera o bloco O
+        /// </summary>
+        private void GenerateO()
+        {
+            Ponto4D pto = pontosLista[0];
+            this.FilhoAdicionar(new Retangulo('A', this, new Ponto4D(pto.X + 30, pto.Y), new Ponto4D(pto.X + 60, pto.Y + 30)));
+            this.FilhoAdicionar(new Retangulo('B', this, new Ponto4D(pto.X + 30, pto.Y - 30), new Ponto4D(pto.X + 60, pto.Y)));
+            this.FilhoAdicionar(new Retangulo('C', this, new Ponto4D(pto.X, pto.Y - 30), new Ponto4D(pto.X + 30, pto.Y)));
+        }
+
+        /// <summary>
+        /// Função que define qual rotação será feita com base no tipo de bloco
+        /// </summary>
         public void Rotate()
         {
             switch (BlocoType)
@@ -120,6 +170,9 @@ namespace CG_N3
             }
         }
 
+        /// <summary>
+        /// Rotação do objeto T
+        /// </summary>
         private void RotateT()
         {
             foreach (var filho in this.GetFilhos())
@@ -164,6 +217,9 @@ namespace CG_N3
             }
         }
 
+        /// <summary>
+        /// Rotação do objeto I
+        /// </summary>
         private void RotateI()
         {
             switch (this.Mode)
@@ -237,6 +293,9 @@ namespace CG_N3
             }
         }
 
+        /// <summary>
+        /// Rotação do objeto Z
+        /// </summary>
         private void RotateZ()
         {
             switch (this.Mode)
@@ -294,6 +353,9 @@ namespace CG_N3
             }
         }
 
+        /// <summary>
+        /// Rotação do objeto L
+        /// </summary>
         private void RotateL()
         {
             switch (this.Mode)
@@ -424,6 +486,9 @@ namespace CG_N3
             }
         }
 
+        /// <summary>
+        /// Rotação do objeto J
+        /// </summary>
         private void RotateJ()
         {
             switch (this.Mode)
@@ -554,6 +619,9 @@ namespace CG_N3
             }
         }
 
+        /// <summary>
+        /// Rotação do objeto S
+        /// </summary>
         private void RotateS()
         {
             switch (this.Mode)
