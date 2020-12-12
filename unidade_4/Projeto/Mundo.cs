@@ -43,7 +43,7 @@ namespace gcgcg
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
       objetoId = Utilitario.charProximo(objetoId);
-      bloco = new Bloco(objetoId, null, new Ponto4D(0, 0, 0), new Ponto4D(30, 30, 0), BlocoType.S);
+      bloco = new Bloco(objetoId, null, new Ponto4D(120, 240, 0), new Ponto4D(150, 270, 0), BlocoType.Z);
       objetosLista.Add(bloco);
       objetoSelecionado = bloco;
             bloco = null;
@@ -154,7 +154,6 @@ namespace gcgcg
                     objetoSelecionado.AtribuirIdentidade();
                 //TODO: não está atualizando a BBox com as transformações geométricas
                 else if (e.Key == Key.Left)
-                    //objetoSelecionado.TranslacaoXYZ(-30, 0, 0);
                     objetoSelecionado.Move(-30, 0);
                 else if (e.Key == Key.Right)
                     objetoSelecionado.Move(30, 0);
@@ -176,19 +175,7 @@ namespace gcgcg
                     objetoSelecionado.Rotacao(-10);
                 else if (e.Key == Key.Space)
                 {
-                    //objetoSelecionado.RotacaoZBBox(90);
                     objetoSelecionado.Rotate();
-                    /*foreach (var filho in objetoSelecionado.GetFilhos())
-                    {
-                        Console.WriteLine("Novo filho");
-                        foreach (var pont in filho.pontosLista)
-                        {
-                            Console.WriteLine("Inicio");
-                            Console.WriteLine(pont.X);
-                            Console.WriteLine(pont.Y);
-                            Console.WriteLine("Fim");
-                        }
-                    }*/
                 }
 
                 else if (e.Key == Key.Number4)
