@@ -26,7 +26,7 @@ namespace gcgcg
 
     private CameraOrtho camera = new CameraOrtho();
     protected List<Objeto> objetosLista = new List<Objeto>();
-    private ObjetoGeometria objetoSelecionado = null;
+    private Bloco objetoSelecionado = null;
     private Ponto4D verticeSelecionado = null;
     private char objetoId = '@';
     private bool bBoxDesenhar = false;
@@ -48,8 +48,7 @@ namespace gcgcg
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
       objetoId = Utilitario.charProximo(objetoId);
-      bloco = new Bloco(objetoId, null, new Ponto4D(0, 0, 0), new Ponto4D(30, 30, 0));
-      bloco.GenerateT();
+      bloco = new Bloco(objetoId, null, new Ponto4D(0, 0, 0), new Ponto4D(30, 30, 0), BlocoType.T, null);
       objetosLista.Add(bloco);
       objetoSelecionado = bloco;
             bloco = null;
@@ -96,7 +95,7 @@ namespace gcgcg
       }
       else if (e.Key == Key.O)
         bBoxDesenhar = !bBoxDesenhar;
-      else if (e.Key == Key.Enter)
+      /*else if (e.Key == Key.Enter)
       {
         if (objetoNovo != null)
         {
@@ -104,7 +103,7 @@ namespace gcgcg
           objetoSelecionado = objetoNovo;
           objetoNovo = null;
         }
-      }
+      }*/
       /*else if (e.Key == Key.Space)
       {
         if (objetoNovo == null)
@@ -126,7 +125,7 @@ namespace gcgcg
         else
           objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
       }*/
-      else if (e.Key == Key.A)
+      /*else if (e.Key == Key.A)
        {
         // Seleciona o objeto onde o cursor esteja na boundbox
         foreach (var objeto in objetosLista)
@@ -149,9 +148,9 @@ namespace gcgcg
             }
         }
         objetoSelecionado = null;
-       }
+       }*/
       else if (objetoSelecionado != null)
-      {
+      {        
                 if (e.Key == Key.M)
                     Console.WriteLine(objetoSelecionado.Matriz);
                 else if (e.Key == Key.P)
@@ -180,13 +179,28 @@ namespace gcgcg
                 else if (e.Key == Key.Number2)
                     objetoSelecionado.Rotacao(-10);
                 else if (e.Key == Key.Space)
-                    objetoSelecionado.RotacaoZBBox(90);
+                {
+                    //objetoSelecionado.RotacaoZBBox(90);
+                    objetoSelecionado.Rotate();
+                    /*foreach (var filho in objetoSelecionado.GetFilhos())
+                    {
+                        Console.WriteLine("Novo filho");
+                        foreach (var pont in filho.pontosLista)
+                        {
+                            Console.WriteLine("Inicio");
+                            Console.WriteLine(pont.X);
+                            Console.WriteLine(pont.Y);
+                            Console.WriteLine("Fim");
+                        }
+                    }*/
+                }
+                    
                 else if (e.Key == Key.Number4)
                     objetoSelecionado.RotacaoZBBox(-10);
                 else if (e.Key == Key.Number9)
                     objetoSelecionado = null;                     // desmacar objeto selecionado
                 
-                else if (e.Key == Key.C)
+                /*else if (e.Key == Key.C)
                 {
                     // Remove Objeto selecionado
                     objetosLista.Remove(objetoSelecionado);
@@ -195,7 +209,7 @@ namespace gcgcg
                     if (objetosLista.Count > 0)
                     objetoSelecionado = (ObjetoGeometria)objetosLista[objetosLista.Count - 1];
                     objetoSelecionado.FilhoRemover(objetoOld);
-                } else if (e.Key == Key.V)
+                } */else if (e.Key == Key.V)
                     // Seleciona vértice
                 {
                     if (verticeSelecionado == null)
