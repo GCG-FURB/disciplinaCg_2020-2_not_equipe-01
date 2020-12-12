@@ -63,12 +63,20 @@ namespace gcgcg
 
      }
 
+    protected void PutBlocoDown()
+    {
+     
+        if (objetoSelecionado != null)
+            objetoSelecionado.Move(0, -30);
+    }
+
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
       base.OnUpdateFrame(e);
       GL.MatrixMode(MatrixMode.Projection);
       GL.LoadIdentity();
       GL.Ortho(camera.xmin, camera.xmax, camera.ymin, camera.ymax, camera.zmin, camera.zmax);
+      PutBlocoDown();
     }
     protected override void OnRenderFrame(FrameEventArgs e)
     {
@@ -294,15 +302,7 @@ namespace gcgcg
     {
       GL.LineWidth(1);
       GL.Begin(PrimitiveType.Lines);
-      // GL.Color3(1.0f,0.0f,0.0f);
-      GL.Color3(Convert.ToByte(255), Convert.ToByte(0), Convert.ToByte(0));
-      GL.Vertex3(0, 0, 0); GL.Vertex3(200, 0, 0);
-      // GL.Color3(0.0f,1.0f,0.0f);
-      GL.Color3(Convert.ToByte(0), Convert.ToByte(255), Convert.ToByte(0));
-      GL.Vertex3(0, 0, 0); GL.Vertex3(0, 200, 0);
-      // GL.Color3(0.0f,0.0f,1.0f);
-      GL.Color3(Convert.ToByte(0), Convert.ToByte(0), Convert.ToByte(255));
-      GL.Vertex3(0, 0, 0); GL.Vertex3(0, 0, 200);
+
       GL.End();
     }
 #endif
@@ -313,7 +313,7 @@ namespace gcgcg
     {
       Mundo window = Mundo.GetInstance(600, 600);
       window.Title = "CG_N3";
-      window.Run(1.0 / 60.0);
+      window.Run(1.0 / 1.0);
     }
   }
 }
