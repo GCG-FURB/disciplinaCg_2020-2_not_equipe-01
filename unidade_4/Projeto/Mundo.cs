@@ -37,13 +37,13 @@ namespace gcgcg
     protected override void OnLoad(EventArgs e)
     {
       base.OnLoad(e);
-      camera.xmin = 0; camera.xmax =300; camera.ymin = 0; camera.ymax = 300;
+      camera.xmin = 0; camera.xmax = 300; camera.ymin = 0; camera.ymax = 300;
 
       Console.WriteLine(" --- Ajuda / Teclas: ");
       Console.WriteLine(" [  H     ] mostra teclas usadas. ");
 
       objetoId = Utilitario.charProximo(objetoId);
-      bloco = new Bloco(objetoId, null, new Ponto4D(120, 240, 0), new Ponto4D(150, 270, 0), BlocoType.Z);
+      bloco = new Bloco(objetoId, null, new Ponto4D(120, 240, 0), new Ponto4D(150, 270, 0), BlocoType.S);
       objetosLista.Add(bloco);
       objetoSelecionado = bloco;
             bloco = null;
@@ -64,7 +64,7 @@ namespace gcgcg
       GL.Clear(ClearBufferMask.ColorBufferBit);
       GL.MatrixMode(MatrixMode.Modelview);
       GL.LoadIdentity();
-#if CG_Gizmo      
+#if CG_Gizmo
       Sru3D();
 #endif
       for (var i = 0; i < objetosLista.Count; i++)
@@ -103,7 +103,7 @@ namespace gcgcg
       {
         if (objetoNovo == null)
         {
-         
+
           objetoId = Utilitario.charProximo(objetoId);
           objetoNovo = new Poligono(objetoId, null);
             if (objetoSelecionado != null)
@@ -113,7 +113,7 @@ namespace gcgcg
             {
                 objetosLista.Add(objetoNovo);
             }
-                       
+
           objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
           objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
         }
@@ -124,7 +124,7 @@ namespace gcgcg
        {
         // Seleciona o objeto onde o cursor esteja na boundbox
         foreach (var objeto in objetosLista)
-        {    
+        {
             if (mouseX > objeto.BBox.obterMenorX && mouseX < objeto.BBox.obterMaiorX)
             {
                 if (mouseY > objeto.BBox.obterMenorY && mouseY < objeto.BBox.obterMaiorY)
@@ -137,7 +137,7 @@ namespace gcgcg
                     } else
                     {
                        objetoSelecionado = null;
-                    }  
+                    }
                     return;
                 }
             }
@@ -154,13 +154,13 @@ namespace gcgcg
                     objetoSelecionado.AtribuirIdentidade();
                 //TODO: não está atualizando a BBox com as transformações geométricas
                 else if (e.Key == Key.Left)
-                    objetoSelecionado.Move(-30, 0);
+                    objetoSelecionado.Move(-30, 0, camera);
                 else if (e.Key == Key.Right)
-                    objetoSelecionado.Move(30, 0);
+                    objetoSelecionado.Move(30, 0, camera);
                 else if (e.Key == Key.Up)
-                    objetoSelecionado.Move(0, 30);
+                    objetoSelecionado.Move(0, 30, camera);
                 else if (e.Key == Key.Down)
-                    objetoSelecionado.Move(0, -30);
+                    objetoSelecionado.Move(0, -30, camera);
                 else if (e.Key == Key.PageUp)
                     objetoSelecionado.EscalaXYZ(2, 2, 2);
                 else if (e.Key == Key.PageDown)
@@ -274,10 +274,10 @@ namespace gcgcg
                     verticeSelecionado.X = mouseX;
                     verticeSelecionado.Y = mouseY;
                 }
-                    
+
             }
     }
-        
+
 
 #if CG_Gizmo
     private void Sru3D()
