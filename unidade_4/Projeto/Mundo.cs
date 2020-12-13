@@ -25,7 +25,7 @@ namespace gcgcg
     }
 
     private CameraOrtho camera = new CameraOrtho();
-    protected List<Objeto> objetosLista = new List<Objeto>();
+    public List<Objeto> objetosLista = new List<Objeto>();
     private Bloco objetoSelecionado = null;
     private Ponto4D verticeSelecionado = null;
     private char objetoId = '@';
@@ -65,17 +65,15 @@ namespace gcgcg
 
     protected void PutBlocoDown()
     {
-
       if (objetoSelecionado != null && !objetoSelecionado.Encaixado)
       {
-        objetoSelecionado.Move(0, -30, camera);
+        objetoSelecionado.Move(0, -30, camera, objetosLista);
       }
       else if (objetoSelecionado != null && objetoSelecionado.Encaixado)
       {
         this.generateRandomBlocoType();
       }
     }
-
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
       base.OnUpdateFrame(e);
@@ -116,60 +114,6 @@ namespace gcgcg
       }
       else if (e.Key == Key.O)
         bBoxDesenhar = !bBoxDesenhar;
-      /*else if (e.Key == Key.Enter)
-      {
-        if (objetoNovo != null)
-        {
-          objetoNovo.PontosRemoverUltimo();   // N3-Exe6: "truque" para deixar o rastro
-          objetoSelecionado = objetoNovo;
-          objetoNovo = null;
-        }
-      }*/
-      /*else if (e.Key == Key.Space)
-      {
-        if (objetoNovo == null)
-        {
-
-          objetoId = Utilitario.charProximo(objetoId);
-          objetoNovo = new Poligono(objetoId, null);
-            if (objetoSelecionado != null)
-            {
-              objetoSelecionado.FilhoAdicionar(objetoNovo);
-            } else
-            {
-                objetosLista.Add(objetoNovo);
-            }
-
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));  // N3-Exe6: "troque" para deixar o rastro
-        }
-        else
-          objetoNovo.PontosAdicionar(new Ponto4D(mouseX, mouseY));
-      }*/
-      /*else if (e.Key == Key.A)
-       {
-        // Seleciona o objeto onde o cursor esteja na boundbox
-        foreach (var objeto in objetosLista)
-        {
-            if (mouseX > objeto.BBox.obterMenorX && mouseX < objeto.BBox.obterMaiorX)
-            {
-                if (mouseY > objeto.BBox.obterMenorY && mouseY < objeto.BBox.obterMaiorY)
-                {
-                    var verificaObjeto = (ObjetoGeometria)objeto;
-                    bool clicouDentro = verificaObjeto.ScanLine(new Ponto4D(mouseX, mouseY));
-                    if (clicouDentro)
-                    {
-                        objetoSelecionado = (ObjetoGeometria)objeto;
-                    } else
-                    {
-                       objetoSelecionado = null;
-                    }
-                    return;
-                }
-            }
-        }
-        objetoSelecionado = null;
-       }*/
       else if (objetoSelecionado != null)
       {
                 if (e.Key == Key.M)
@@ -180,11 +124,11 @@ namespace gcgcg
                     objetoSelecionado.AtribuirIdentidade();
                 //TODO: não está atualizando a BBox com as transformações geométricas
                 else if (e.Key == Key.Left)
-                    objetoSelecionado.Move(-30, 0, camera);
+                    objetoSelecionado.Move(-30, 0, camera, objetosLista);
                 else if (e.Key == Key.Right)
-                    objetoSelecionado.Move(30, 0, camera);
+                    objetoSelecionado.Move(30, 0, camera, objetosLista);
                 else if (e.Key == Key.Down)
-                    objetoSelecionado.Move(0, -30, camera);
+                    objetoSelecionado.Move(0, -30, camera, objetosLista);
                 else if (e.Key == Key.PageUp)
                     objetoSelecionado.EscalaXYZ(2, 2, 2);
                 else if (e.Key == Key.PageDown)
@@ -206,17 +150,6 @@ namespace gcgcg
                     objetoSelecionado.RotacaoZBBox(-10);
                 else if (e.Key == Key.Number9)
                     objetoSelecionado = null;                     // desmacar objeto selecionado
-
-                /*else if (e.Key == Key.C)
-                {
-                    // Remove Objeto selecionado
-                    objetosLista.Remove(objetoSelecionado);
-                    var objetoOld = objetoSelecionado;
-                    // Seleciona o próximo objeto da lista
-                    if (objetosLista.Count > 0)
-                    objetoSelecionado = (ObjetoGeometria)objetosLista[objetosLista.Count - 1];
-                    objetoSelecionado.FilhoRemover(objetoOld);
-                } */
                 else if (e.Key == Key.V)
                 // Seleciona vértice
                 {

@@ -145,9 +145,9 @@ namespace CG_N3
         /// </summary>
         /// <param name="x">Deslocamento em X</param>
         /// <param name="y">Deslocamento em Y</param>
-        public void Move(double x, double y, CameraOrtho camera)
+        public void Move(double x, double y, CameraOrtho camera, List<Objeto> objetosMundo)
         {
-            if(this.validMovement(x,y,camera))
+            if(this.validMovement(x,y,camera, objetosMundo))
             {
                 // Percorre os pontos do quadro principal
                 foreach (var pto in pontosLista)
@@ -1256,8 +1256,12 @@ namespace CG_N3
             }
         }
 
-        private bool validMovement(double x, double y, CameraOrtho camera)
+        private bool validMovement(double x, double y, CameraOrtho camera, List<Objeto> objetosMundo)
         {
+            if (HasColision(x, y, objetosMundo)) {
+                return false;
+            }
+
             foreach(var pto in pontosLista)
             {
                 if (pto.X + x > camera.xmax  || pto.X + x < camera.xmin || pto.Y + y > camera.ymax || pto.Y + y < camera.ymin)
@@ -1287,6 +1291,71 @@ namespace CG_N3
             }
 
             return true;
+        }
+        public bool HasColision(double x, double y, List<Objeto> objetosMundo)
+        {
+            foreach(var bloco in objetosMundo)
+            {
+                if (bloco == this || this.Encaixado)
+                {
+                    return false;
+                }
+
+                if(ObjectsHasColision(x, y, this, bloco))
+                {
+                    this.Encaixado = true;
+                    return true;
+                }
+
+                // verifica se tem colisão com algum filho do bloco
+                foreach (var filho in bloco.GetFilhos())
+                {
+                    // tem que remover o objeto atual
+                    if(ObjectsHasColision(x, y, this, filho))
+                    {
+                        this.Encaixado = true;
+                        return true;
+                    }
+                }
+
+                // verifica se tem colisão com algum filho
+                foreach (var filho in this.GetFilhos())
+                {
+                    if(ObjectsHasColision(x, y, filho, bloco))
+                    {
+                        this.Encaixado = true;
+                        return true;
+                    }
+
+                    foreach (var filhoBloco in bloco.GetFilhos())
+                    {
+                        if (ObjectsHasColision(x, y, filho, filhoBloco))
+                        {
+                            this.Encaixado = true;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool ObjectsHasColision(double x, double y, Objeto objeto1, Objeto objeto2)
+        {
+            double menorY1 = ((Retangulo)objeto1).PtoInfEsq.Y + y;
+            double maiorY1 = ((Retangulo)objeto1).PtoSupDireito.Y + y;
+            double maiorX1 = ((Retangulo)objeto1).PtoInfEsq.X + x;
+            double menorX1 = ((Retangulo)objeto1).PtoSupDireito.X + x;
+
+            double maiorY2 = ((Retangulo)objeto2).PtoSupDireito.Y;
+            double menorY2 = ((Retangulo)objeto2).PtoInfEsq.Y;
+            double maiorX2 = ((Retangulo)objeto2).PtoInfEsq.X;
+            double menorX2 = ((Retangulo)objeto2).PtoSupDireito.X;
+
+            // se o menor Y do objeto selecionado for igual ao maior Y do objeto comparado
+            // e se o menor X e maior X do objeto selecionado é igual ao maior X e maior X do objeto percorrido, então tem colisão
+            return menorY1 == maiorY2 && maiorX1 == maiorX2 && menorX1 == menorX2;
         }
     }
 }

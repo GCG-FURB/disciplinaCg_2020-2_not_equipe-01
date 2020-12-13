@@ -11,8 +11,12 @@ namespace gcgcg
 {
   internal class Retangulo : ObjetoGeometria
   {
+    public Ponto4D PtoInfEsq { get; set; }
+    public Ponto4D PtoSupDireito { get; set; }
     public Retangulo(char rotulo, Objeto paiRef, Ponto4D ptoInfEsq, Ponto4D ptoSupDir, BlocoType blocoType) : base(rotulo, paiRef)
     {
+      PtoInfEsq = ptoInfEsq;
+      PtoSupDireito = ptoSupDir;
       base.PontosAdicionar(ptoInfEsq);
       base.PontosAdicionar(new Ponto4D(ptoSupDir.X, ptoInfEsq.Y));
       base.PontosAdicionar(ptoSupDir);
@@ -54,12 +58,12 @@ namespace gcgcg
                     default:
                         break;
                 }
-                
+
         GL.Vertex2(pto.X, pto.Y);
       }
       GL.End();
     }
-    
+
     //TODO: melhorar para exibir não só a lista de pontos (geometria), mas também a topologia ... poderia ser listado estilo OBJ da Wavefrom
     public override string ToString()
     {
