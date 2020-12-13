@@ -21,6 +21,7 @@ namespace CG_N3
         {
             BlocoType = blocoType;
             Mode = "Mode1";
+            Encaixado = false;
 
             // Gera o bloco de acordo com o parâmetro
             switch (BlocoType)
@@ -55,6 +56,7 @@ namespace CG_N3
         /// Tipo do bloco gerado
         /// </summary>
         public new BlocoType BlocoType { get; }
+        public bool Encaixado { get; set; }
 
         /// <summary>
         /// Modo de rotação do bloco
@@ -249,7 +251,7 @@ namespace CG_N3
                             {
                                 RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
                                 return;
-                            }            
+                            }
                         }
                         filho.rotulo = 'B';
                         break;
@@ -316,7 +318,7 @@ namespace CG_N3
             switch (this.Mode)
             {
                 case "Mode1":
-                    foreach (var filho in this.GetFilhos())  
+                    foreach (var filho in this.GetFilhos())
                     {
                         int j = 0;
                         switch (filho.rotulo)
@@ -654,7 +656,7 @@ namespace CG_N3
                                     filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
                                     j++;
 
-                                    // Modifica os pontos 
+                                    // Modifica os pontos
                                     pto.X -= 30;
 
                                     // Valida modificação
@@ -1260,6 +1262,11 @@ namespace CG_N3
             {
                 if (pto.X + x > camera.xmax  || pto.X + x < camera.xmin || pto.Y + y > camera.ymax || pto.Y + y < camera.ymin)
                 {
+                    if (pto.Y + y <= camera.ymin)
+                    {
+                        this.Encaixado = true;
+                    }
+
                     return false;
                 }
             }
@@ -1270,6 +1277,10 @@ namespace CG_N3
                 {
                     if (pto.X + x > camera.xmax || pto.X + x < camera.xmin || pto.Y + y > camera.ymax || pto.Y + y < camera.ymin)
                     {
+                        if (pto.Y + y <= camera.ymin)
+                        {
+                            this.Encaixado = true;
+                        }
                         return false;
                     }
                 }

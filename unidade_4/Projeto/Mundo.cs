@@ -65,9 +65,15 @@ namespace gcgcg
 
     protected void PutBlocoDown()
     {
-     
-        if (objetoSelecionado != null)
-            objetoSelecionado.Move(0, -30, camera);
+
+      if (objetoSelecionado != null && !objetoSelecionado.Encaixado)
+      {
+        objetoSelecionado.Move(0, -30, camera);
+      }
+      else if (objetoSelecionado != null && objetoSelecionado.Encaixado)
+      {
+        this.generateRandomBlocoType();
+      }
     }
 
     protected override void OnUpdateFrame(FrameEventArgs e)
@@ -193,7 +199,7 @@ namespace gcgcg
                     objetoSelecionado.Rotacao(-10);
                 else if (e.Key == Key.Space)
                 {
-                    objetoSelecionado.Rotate();
+                    objetoSelecionado.Rotate(camera);
                 }
 
                 else if (e.Key == Key.Number4)
