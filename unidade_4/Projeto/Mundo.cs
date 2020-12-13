@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using OpenTK.Input;
 using CG_Biblioteca;
 using CG_N3;
+using System.Linq;
 
 namespace gcgcg
 {
@@ -25,7 +26,7 @@ namespace gcgcg
     }
 
     private CameraOrtho camera = new CameraOrtho();
-    public List<Objeto> objetosLista = new List<Objeto>();
+    public List<ObjetoGeometria> objetosLista = new List<ObjetoGeometria>();
     private Bloco objetoSelecionado = null;
     private Ponto4D verticeSelecionado = null;
     private char objetoId = '@';
@@ -65,15 +66,119 @@ namespace gcgcg
 
     protected void PutBlocoDown()
     {
-      if (objetoSelecionado != null && !objetoSelecionado.Encaixado)
-      {
-        objetoSelecionado.Move(0, -30, camera, objetosLista);
-      }
-      else if (objetoSelecionado != null && objetoSelecionado.Encaixado)
-      {
-        this.generateRandomBlocoType();
-      }
+        if(objetoSelecionado != null && !objetoSelecionado.Move(0, -30, camera, objetosLista) )
+            {
+                if (objetoSelecionado.pontosLista[0].X == 120 && objetoSelecionado.pontosLista[0].Y == 240)
+                {
+                    objetoSelecionado = null;
+                    return;
+                }
+                VerifyLineFull();
+                this.generateRandomBlocoType();
+            }     
     }
+
+    protected void VerifyLineFull()
+        {
+            var lineScan = 210;
+
+            while (lineScan > 0)
+            {
+                var lineCount = 0;
+                //lineCount = objetosLista.Where(objeto => objeto.pontosLista[2].Y == lineScan && objeto.pontosLista[0].Y == (lineScan - 30)).Count();
+
+                foreach (var objeto in objetosLista)
+                {
+                    if (objeto.pontosLista.Count() > 0)
+                    {
+                        if (objeto.pontosLista[2].Y == lineScan && objeto.pontosLista[0].Y == (lineScan - 30))
+                        {
+                            lineCount++;
+                        }
+                           
+                    }
+                    foreach (var objetoFilho in objeto.GetFilhos())
+                    {
+                        if (objetoFilho.pontosLista.Count() > 0)
+                        {
+                            if (objetoFilho.pontosLista[2].Y == lineScan && objetoFilho.pontosLista[0].Y == (lineScan - 30))
+                            {
+                                lineCount++;
+                            }
+                                
+                        }         
+                            
+                    }
+                }
+
+                if (lineCount == 10)
+                {
+
+                    foreach (var objeto in objetosLista)
+                    {
+                        if (objeto.pontosLista.Count() > 0)
+                        {
+                            if (objeto.pontosLista[2].Y == lineScan && objeto.pontosLista[0].Y == (lineScan - 30))
+                            {
+                                objeto.PontosRemoverTodos();
+                            }
+                                
+                        }
+                            
+
+                        foreach (var objetoFilho in objeto.GetFilhos())
+                        {
+                            if (objetoFilho.pontosLista.Count() > 0)
+                            {
+                                if (objetoFilho.pontosLista[2].Y == lineScan && objetoFilho.pontosLista[0].Y == (lineScan - 30))
+                                {
+                                    objetoFilho.PontosRemoverTodos();
+                                }
+                                    
+                            }          
+                        }
+                    }
+
+
+                    foreach (var objeto in objetosLista)
+                    {
+                        if (objeto.pontosLista.Count() > 0)
+                        {
+                            if (objeto.pontosLista[2].Y > lineScan && objeto.pontosLista[0].Y > (lineScan - 30))
+                            {
+                                foreach (var pto in objeto.pontosLista)
+                                {
+                                    pto.Y -= 30;
+                                }
+                            }
+                        }
+                        
+
+                        foreach (var objetoFilho in objeto.GetFilhos())
+                        {
+                            if (objetoFilho.pontosLista.Count() > 0)
+                            {
+                                if (objetoFilho.pontosLista[2].Y > lineScan && objetoFilho.pontosLista[0].Y > (lineScan - 30))
+                                {
+                                    foreach (var pto in objetoFilho.pontosLista)
+                                    {
+                                        pto.Y -= 30;
+                                    }
+                                }
+
+                            }
+                            
+                        }
+                    }
+
+
+                }
+
+                lineScan -= 30;
+
+            }
+        }
+
     protected override void OnUpdateFrame(FrameEventArgs e)
     {
       base.OnUpdateFrame(e);
