@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CG_Biblioteca;
 using gcgcg;
 using OpenTK.Graphics.OpenGL;
@@ -52,7 +54,7 @@ namespace CG_N3
         /// <summary>
         /// Tipo do bloco gerado
         /// </summary>
-        public BlocoType BlocoType { get; }
+        public new BlocoType BlocoType { get; }
 
         /// <summary>
         /// Modo de rotação do bloco
@@ -167,27 +169,27 @@ namespace CG_N3
         /// <summary>
         /// Função que define qual rotação será feita com base no tipo de bloco
         /// </summary>
-        public void Rotate()
+        public void Rotate(CameraOrtho camera)
         {
             switch (BlocoType)
             {
                 case BlocoType.T:
-                    this.RotateT();
+                    this.RotateT(camera);
                     break;
                 case BlocoType.I:
-                    this.RotateI();
+                    this.RotateI(camera);
                     break;
                 case BlocoType.Z:
-                    this.RotateZ();
+                    this.RotateZ(camera);
                     break;
                 case BlocoType.L:
-                    this.RotateL();
+                    this.RotateL(camera);
                     break;
                 case BlocoType.J:
-                    this.RotateJ();
+                    this.RotateJ(camera);
                     break;
                 case BlocoType.S:
-                    this.RotateS();
+                    this.RotateS(camera);
                     break;
                 default:
                     break;
@@ -195,120 +197,231 @@ namespace CG_N3
         }
 
         /// <summary>
-        /// Rotação do objeto T
+        /// Valida se a rotação está dentro dos limites da câmera
         /// </summary>
-        private void RotateT()
+        /// <param name="pto">Pontos da rotação</param>
+        /// <param name="camera">Câmera</param>
+        /// <returns>true se é valida, false se não é</returns>
+        private bool IsRotationValid(Ponto4D pto, CameraOrtho camera)
         {
+            if (pto.X > camera.xmax || pto.X < camera.xmin || pto.Y > camera.ymax || pto.Y < camera.ymin)
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Restaura valores originais dos filhos
+        /// </summary>
+        /// <param name="filhosPontosBackup">Rotulos dos filhos</param>
+        /// <param name="filhosRotuloBackup">Pontos dos filhos</param>
+        private void RestoreFilhos(List<List<Ponto4D>> filhosPontosBackup, List<char> filhosRotuloBackup)
+        {
+            int i = 0;
             foreach (var filho in this.GetFilhos())
             {
+                filho.rotulo = filhosRotuloBackup[i];
+                filho.pontosLista = filhosPontosBackup[i];
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Rotação do objeto T
+        /// </summary>
+        private void RotateT(CameraOrtho camera)
+        {
+            var filhosRotuloBackup = this.GetFilhos().Select(filho => filho.rotulo).ToList();
+            var filhosPontosBackup = this.GetFilhos().Select(filho => new List<Ponto4D>(filho.pontosLista)).ToList();
+            int i = 0;
+            foreach (var filho in this.GetFilhos())
+            {
+                int j = 0;
                 switch (filho.rotulo)
                 {
                     case 'L':
                         foreach (var pto in filho.pontosLista)
                         {
+                            filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                            j++;
                             pto.X += 30;
                             pto.Y -= 30;
+                            if (!IsRotationValid(pto, camera))
+                            {
+                                RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                return;
+                            }            
                         }
                         filho.rotulo = 'B';
                         break;
                     case 'B':
                         foreach (var pto in filho.pontosLista)
                         {
+                            filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                            j++;
                             pto.X += 30;
                             pto.Y += 30;
+                            if (!IsRotationValid(pto, camera))
+                            {
+                                RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                return;
+                            }
                         }
                         filho.rotulo = 'R';
                         break;
                     case 'R':
                         foreach (var pto in filho.pontosLista)
                         {
+                            filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                            j++;
                             pto.X -= 30;
                             pto.Y += 30;
+                            if (!IsRotationValid(pto, camera))
+                            {
+                                RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                return;
+                            }
                         }
                         filho.rotulo = 'T';
                         break;
                     case 'T':
                         foreach (var pto in filho.pontosLista)
                         {
+                            filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                            j++;
                             pto.X -= 30;
                             pto.Y -= 30;
+                            if (!IsRotationValid(pto, camera))
+                            {
+                                RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                return;
+                            }
                         }
                         filho.rotulo = 'L';
                         break;
                     default:
                         break;
                 }
+                i++;
             }
         }
 
         /// <summary>
         /// Rotação do objeto I
         /// </summary>
-        private void RotateI()
+        private void RotateI(CameraOrtho camera)
         {
+            var filhosRotuloBackup = this.GetFilhos().Select(filho => filho.rotulo).ToList();
+            var filhosPontosBackup = this.GetFilhos().Select(filho => new List<Ponto4D>(filho.pontosLista)).ToList();
+            int i = 0;
             switch (this.Mode)
             {
                 case "Mode1":
-                    foreach (var filho in this.GetFilhos())
+                    foreach (var filho in this.GetFilhos())  
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X -= 30;
                                     pto.Y -= 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X += 30;
                                     pto.Y += 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X += 60;
                                     pto.Y += 60;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode2";
                     break;
                 case "Mode2":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X += 30;
                                     pto.Y += 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X -= 30;
                                     pto.Y -= 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X -= 60;
                                     pto.Y -= 60;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode1";
                     break;
@@ -320,55 +433,90 @@ namespace CG_N3
         /// <summary>
         /// Rotação do objeto Z
         /// </summary>
-        private void RotateZ()
+        private void RotateZ(CameraOrtho camera)
         {
+            var filhosRotuloBackup = this.GetFilhos().Select(filho => filho.rotulo).ToList();
+            var filhosPontosBackup = this.GetFilhos().Select(filho => new List<Ponto4D>(filho.pontosLista)).ToList();
+            int i = 0;
             switch (this.Mode)
             {
                 case "Mode1":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.Y += 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X += 60;
                                     pto.Y += 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode2";
                     break;
                 case "Mode2":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.Y -= 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
                                     pto.X -= 60;
                                     pto.Y -= 30;
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode1";
                     break;
@@ -380,128 +528,283 @@ namespace CG_N3
         /// <summary>
         /// Rotação do objeto L
         /// </summary>
-        private void RotateL()
+        private void RotateL(CameraOrtho camera)
         {
+            var filhosRotuloBackup = this.GetFilhos().Select(filho => filho.rotulo).ToList();
+            var filhosPontosBackup = this.GetFilhos().Select(filho => new List<Ponto4D>(filho.pontosLista)).ToList();
+            int i = 0;
             switch (this.Mode)
             {
                 case "Mode1":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y += 60;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode2";
                     break;
                 case "Mode2":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos 
                                     pto.X -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode3";
                     break;
                 case "Mode3":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode4";
                     break;
                 case "Mode4":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode1";
                     break;
@@ -513,128 +816,283 @@ namespace CG_N3
         /// <summary>
         /// Rotação do objeto J
         /// </summary>
-        private void RotateJ()
+        private void RotateJ(CameraOrtho camera)
         {
+            var filhosRotuloBackup = this.GetFilhos().Select(filho => filho.rotulo).ToList();
+            var filhosPontosBackup = this.GetFilhos().Select(filho => new List<Ponto4D>(filho.pontosLista)).ToList();
+            int i = 0;
             switch (this.Mode)
             {
                 case "Mode1":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode2";
                     break;
                 case "Mode2":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode3";
                     break;
                 case "Mode3":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode4";
                     break;
                 case "Mode4":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.Y -= 60;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode1";
                     break;
@@ -646,69 +1104,148 @@ namespace CG_N3
         /// <summary>
         /// Rotação do objeto S
         /// </summary>
-        private void RotateS()
+        private void RotateS(CameraOrtho camera)
         {
+            var filhosRotuloBackup = this.GetFilhos().Select(filho => filho.rotulo).ToList();
+            var filhosPontosBackup = this.GetFilhos().Select(filho => new List<Ponto4D>(filho.pontosLista)).ToList();
+            int i = 0;
             switch (this.Mode)
             {
                 case "Mode1":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y += 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 60;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode2";
                     break;
                 case "Mode2":
                     foreach (var filho in this.GetFilhos())
                     {
+                        int j = 0;
                         switch (filho.rotulo)
                         {
                             case 'A':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X += 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'B':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 30;
                                     pto.Y -= 30;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             case 'C':
                                 foreach (var pto in filho.pontosLista)
                                 {
+                                    // Faz o backup dos pontos atuais
+                                    filhosPontosBackup[i][j] = new Ponto4D(pto.X, pto.Y);
+                                    j++;
+
+                                    // Modifica os pontos
                                     pto.X -= 60;
+
+                                    // Valida modificação
+                                    if (!IsRotationValid(pto, camera))
+                                    {
+                                        RestoreFilhos(filhosPontosBackup, filhosRotuloBackup);
+                                        return;
+                                    }
                                 }
                                 break;
                             default:
                                 break;
                         }
+                        i++;
                     }
                     this.Mode = "Mode1";
                     break;
