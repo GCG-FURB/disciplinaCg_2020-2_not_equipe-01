@@ -1268,8 +1268,11 @@ namespace CG_N3
             {
                 if (objeto.pontosLista.Count() > 0)
                 {
-                    if (this.pontosLista[0].X + x == objeto.pontosLista[0].X
+                    if ((this.pontosLista[0].X + x == objeto.pontosLista[0].X
                     && this.pontosLista[2].X + x == objeto.pontosLista[2].X
+                    || this.pontosLista[0].X + x == objeto.pontosLista[2].X
+                    && this.pontosLista[2].X + x == objeto.pontosLista[0].X
+                    )
                     && this.pontosLista[0].Y + y == objeto.pontosLista[0].Y
                     && this.pontosLista[2].Y + y == objeto.pontosLista[2].Y
                     )
@@ -1282,8 +1285,11 @@ namespace CG_N3
                 {
                     if (objetoMundoFilho.pontosLista.Count() > 0)
                     {
-                        if (this.pontosLista[0].X + x == objetoMundoFilho.pontosLista[0].X
-                        && this.pontosLista[2].X + x == objetoMundoFilho.pontosLista[2].X
+                        if ((this.pontosLista[0].X + x == objetoMundoFilho.pontosLista[0].X
+                        && this.pontosLista[2].X + x == objetoMundoFilho.pontosLista[2].X ||
+                        this.pontosLista[0].X + x == objetoMundoFilho.pontosLista[2].X
+                        && this.pontosLista[2].X + x == objetoMundoFilho.pontosLista[0].X
+                        )
                         && this.pontosLista[0].Y + y == objetoMundoFilho.pontosLista[0].Y
                         && this.pontosLista[2].Y + y == objetoMundoFilho.pontosLista[2].Y
                         )
@@ -1302,8 +1308,11 @@ namespace CG_N3
                 {
                     if (objeto.pontosLista.Count() > 0)
                     {
-                       if (blocoFilho.pontosLista[0].X + x == objeto.pontosLista[0].X
-                            && blocoFilho.pontosLista[2].X + x == objeto.pontosLista[2].X
+                       if ((blocoFilho.pontosLista[0].X + x == objeto.pontosLista[0].X
+                            && blocoFilho.pontosLista[2].X + x == objeto.pontosLista[2].X ||
+                            blocoFilho.pontosLista[0].X + x == objeto.pontosLista[2].X
+                            && blocoFilho.pontosLista[2].X + x == objeto.pontosLista[0].X
+                            )
                             && blocoFilho.pontosLista[0].Y + y == objeto.pontosLista[0].Y
                             && blocoFilho.pontosLista[2].Y + y == objeto.pontosLista[2].Y
                             )
@@ -1319,8 +1328,11 @@ namespace CG_N3
                     {
                         if (objetoMundoFilho.pontosLista.Count() > 0)
                         {
-                            if (blocoFilho.pontosLista[0].X + x == objetoMundoFilho.pontosLista[0].X
-                                && blocoFilho.pontosLista[2].X + x == objetoMundoFilho.pontosLista[2].X
+                            if ((blocoFilho.pontosLista[0].X + x == objetoMundoFilho.pontosLista[0].X
+                                && blocoFilho.pontosLista[2].X + x == objetoMundoFilho.pontosLista[2].X ||
+                                blocoFilho.pontosLista[0].X + x == objetoMundoFilho.pontosLista[2].X
+                                && blocoFilho.pontosLista[2].X + x == objetoMundoFilho.pontosLista[0].X
+                                )
                                 && blocoFilho.pontosLista[0].Y + y == objetoMundoFilho.pontosLista[0].Y
                                 && blocoFilho.pontosLista[2].Y + y == objetoMundoFilho.pontosLista[2].Y
                                 )
